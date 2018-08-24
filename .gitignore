@@ -8,6 +8,7 @@
 
 # dependencies
 /node_modules
+nodeapi/node_modules
 
 # IDEs and editors
 /.idea
