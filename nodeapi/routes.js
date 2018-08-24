@@ -41,7 +41,7 @@ var appRouter = function (app) {
             if (err) {
                 return res.status(404).send('bad request');
             }
-            res.status(200).send(body['Siri']['ServiceDelivery']['VehicleMonitoringDelivery']);
+            res.status(200).send(body['Siri']['ServiceDelivery']['VehicleMonitoringDelivery']['0']);
         });
 
     })

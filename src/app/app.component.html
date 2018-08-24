@@ -11,6 +11,8 @@
   <div>
     
     <p>{{busInfo.shortName}}: ( {{busInfo.longName}} )</p>
+
+    <button (click)='refresh()'>Refresh</button>
     <p>Directions</p>
 
     <div *ngFor="let direction of busInfo.directions; index as i">
@@ -18,14 +20,14 @@
       
 
       <div *ngIf="expandFrom && i == 0">
-        <div *ngFor="let stop of fromStops.stops">
-          {{stop.name}}
+        <div *ngFor="let stop of fromStops">
+          <p>{{stop.stopDescription}}</p>
         </div>
       </div>
 
       <div *ngIf="expandBack && i == 1">
-        <div *ngFor="let stop of backStops.stops">
-          {{stop.name}}
+        <div *ngFor="let stop of backStops">
+          <p>{{stop.stopDescription}}</p>
         </div>
       </div>
 

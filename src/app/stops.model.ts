@@ -4,4 +4,5 @@ export class Stop {
     longitude: number;
     name: string;
     stopDirection: string;
+    stopDescription: string;
 }
