@@ -11,7 +11,6 @@ app.use(function(req, res, next) {
     next();
 });
 
-
 routes(app);
 
 var server = app.listen(3000, function () {
