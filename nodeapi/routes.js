@@ -1,6 +1,15 @@
 const request = require('request');
+const accountSid = 'AC436f0f54a0da9fae78f50b31a168ae98';
+const authToken = '';
+
+
+const client = require('twilio')(accountSid, authToken);
+
 
 var appRouter = function (app) {
+    /**
+     * get route info
+     */
     app.get("/get_route/:route", function (req, res) {
         const url = `http://bustime.mta.info/api/search?q=${req.params.route}`;
         request(url, { json: true }, (err, result, body) => {
@@ -13,6 +22,9 @@ var appRouter = function (app) {
         });
     });
 
+    /**
+     * get bidirectional vehicle stops
+     */
     app.get("/get_stops/:route", function (req, res) {
         const from = `http://bustime.mta.info/api/stops-on-route-for-direction?routeId=${req.params.route}&directionId=0`;
         const back = `http://bustime.mta.info/api/stops-on-route-for-direction?routeId=${req.params.route}&directionId=1`;
@@ -29,6 +41,9 @@ var appRouter = function (app) {
         });
     });
 
+    /**
+     * get vehicle activity
+     */
     app.get("/get_vehicle_info/:route", function (req, res) {
         const url = `http://bustime.mta.info/api/siri/vehicle-monitoring.json?key=OBANYC&LineRef=${req.params.route}`;
         request(url, { json: true }, (err, result, body) => {
@@ -38,7 +53,60 @@ var appRouter = function (app) {
             res.status(200).send(body['Siri']['ServiceDelivery']['VehicleMonitoringDelivery']['0']);
         });
 
-    })
+    });
+
+    app.get("/get_notification/:stopId/:busId/:phone_number/:mins_before", function (req, res) {
+        const url = `http://bustime.mta.info/api/siri/stop-monitoring.json?key=OBANYC&OperatorRef=MTA&MonitoringRef=${req.params.stopId}&LineRef=MTA%20NYCT_Q17`
+
+        request(url, { json: true }, (err, result, body) => {
+            if (err) {
+                return res.status(404).send('bad request');
+            }
+
+            let minDeduct = 10;
+            let newTime = undefined;
+
+            for (let item of body['Siri']['ServiceDelivery']['StopMonitoringDelivery'][0]['MonitoredStopVisit']) {
+                // console.log(item['MonitoredVehicleJourney']['MonitoredCall']['ExpectedArrivalTime']);
+                let timeStr = item['MonitoredVehicleJourney']['MonitoredCall']['ExpectedArrivalTime'];
+                let busTime = new Date(timeStr);
+                busTime.setMinutes(busTime.getMinutes() - 10);
+
+                if (busTime > Date.now()) {
+                    newTime = busTime;
+                    break;
+                } 
+            }
+
+            if (newTime === undefined) {
+                res.status(200).send('No bus within given time range');
+            } else {
+                
+                console.log(`receiveing the message in ${newTime}`);
+
+                setTimeout(() => {
+
+                    console.log('123');
+        
+                    client.messages
+                        .create({
+                            to: '+16465206821',
+                            from: '+12015286431',
+                            body: `${req.params.busId} Bus will arrive in ${minDeduct} mins, get ready!!!`,
+                        })
+                        .then((message) => console.log(message.sid));
+        
+                    console.log('done');
+            
+                }, newTime - Date.now());
+
+
+                res.status(200).send('Done, you will receive a SMS in ' + minDeduct + ' minutes before the bus arrive');
+            }
+
+        });
+
+    });
 
 }
 

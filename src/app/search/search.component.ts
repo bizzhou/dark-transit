@@ -104,4 +104,8 @@ export class SearchComponent implements OnInit {
     this.searchFlag = true;
   }
 
+  sendNotify(stop: Stop) {
+    console.log(stop);
+  }
+
 }
