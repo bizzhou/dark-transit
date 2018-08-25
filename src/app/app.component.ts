@@ -20,7 +20,6 @@ export class AppComponent implements OnInit{
   constructor(private http: HttpClient) {
   }
 
-
   refresh() {
     this.getStopInfo();
   }
@@ -100,8 +99,8 @@ export class AppComponent implements OnInit{
           this.busDictionary[activity.stopPointRef] = activity;
         }
 
-        this.buildDescription(this.fromStops);
-        this.buildDescription(this.backStops);
+        // this.buildDescription(this.fromStops);
+        // this.buildDescription(this.backStops);
 
       })
       .catch(err => {
@@ -112,25 +111,8 @@ export class AppComponent implements OnInit{
   }
 
   ngOnInit() {
-    
       this.getRoute();
       this.getStopInfo();
-
-
-      
   }
-
-
-  writeDesc(): any {
-    
-
-
-  }
-
-  
-
-
-  
-
 
 }

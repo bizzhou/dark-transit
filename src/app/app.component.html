@@ -10,28 +10,41 @@
 
   <div>
     
-    <p>{{busInfo.shortName}}: ( {{busInfo.longName}} )</p>
-
+    <div>{{busInfo.shortName}}: ( {{busInfo.longName}} ) 
     <button (click)='refresh()'>Refresh</button>
-    <p>Directions</p>
+    </div>
 
     <div *ngFor="let direction of busInfo.directions; index as i">
-      <p (click)="getDetails(i)">To {{direction.destination}}</p>
+      <p class="travel-direction" (click)="getDetails(i)">To {{direction.destination}}</p>
       
 
-      <div *ngIf="expandFrom && i == 0">
-        <div *ngFor="let stop of fromStops">
-          <p>{{stop.stopDescription}}</p>
+    <div class="travel-info">
+        <div *ngIf="expandFrom && i == 0">
+            <div *ngFor="let stop of fromStops">
+              <p><i class="fa fa-arrow-right" aria-hidden="true"></i> &nbsp;  {{stop.name}} &nbsp;  
+                <span [ngStyle]="{'color':'white', 'font-weight':'bold'}" *ngIf="busDictionary[stop.id] !== undefined">
+                  <i class="fa fa-bus" aria-hidden="true"></i>
+                  {{busDictionary[stop.id]['stopDesc']}}
+                </span>
+              </p>
+            </div>
+          </div>
+    
+          <div *ngIf="expandBack && i == 1">
+              <div *ngFor="let stop of backStops">
+                <p><i class="fa fa-arrow-right" aria-hidden="true"></i> &nbsp;  {{stop.name}} &nbsp; 
+                  <span [ngStyle]="{'color':'white', 'font-weight':'bold'}" *ngIf="busDictionary[stop.id] !== undefined">
+                    <i class="fa fa-bus" aria-hidden="true"></i>
+                    {{busDictionary[stop.id]['stopDesc']}}
+                  </span>
+                </p>
+              </div>
+            </div>
+    
         </div>
-      </div>
-
-      <div *ngIf="expandBack && i == 1">
-        <div *ngFor="let stop of backStops">
-          <p>{{stop.stopDescription}}</p>
-        </div>
-      </div>
-
     </div>
+
+      
 
   </div>
 
