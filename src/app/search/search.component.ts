@@ -13,8 +13,8 @@ import { Activity } from '../activity.model';
 export class SearchComponent implements OnInit {
 
   busInfo = new Bus();
-  fromStops : Stop[];
-  backStops : Stop[];
+  fromStops: Stop[];
+  backStops: Stop[];
   busDictionary = {};
   expandFrom: boolean;
   expandBack: boolean;
@@ -32,7 +32,7 @@ export class SearchComponent implements OnInit {
   getDetails(index) {
     console.log(index);
     if (index == 0) {
-      
+
       this.expandFrom = this.expandFrom ? false : true;
       console.log(this.fromStops);
     } else {
@@ -47,52 +47,39 @@ export class SearchComponent implements OnInit {
   }
 
   getStopInfo() {
-    this.http.get(`http://localhost:3000/get_stops/${this.busId}`).toPromise()
+    this.http.get(`http://localhost:3000/get_stops/${this.busFullId}`).toPromise()
       .then(res => {
-          this.fromStops = res[0]['stops'] as Stop[];
-          this.backStops = res[1]['stops'] as Stop[];
-          this.getBusActivity();
+        this.fromStops = res[0]['stops'] as Stop[];
+        this.backStops = res[1]['stops'] as Stop[];
+        this.getBusActivity();
       })
       .catch(err => {
         alert('error featch stops information')
-    });
+      });
   }
 
-  getRoute() {
-    this.http.get(`http://localhost:3000/get_route/${this.busId}`).toPromise()
-      .then(res => {
-        const data = res['searchResults']['matches'][0];
-        this.busInfo.directions = data['directions'] ;
-        this.busInfo.longName = data['longName'] ;
-        this.busInfo.shortName = data['shortName'] ;
-        this.busInfo.id = data['id'] ;
+  getRoute(): Promise<Object> {
+    return this.http.get(`http://localhost:3000/get_route/${this.busId}`).toPromise();
+    //   .then(res => {
+    //     const data = res['searchResults']['matches'][0];
+    //     this.busInfo.directions = data['directions'] ;
+    //     this.busInfo.longName = data['longName'] ;
+    //     this.busInfo.shortName = data['shortName'] ;
+    //     this.busInfo.id = data['id'] ;
 
-        console.log(this.busInfo);
-      }).catch(err => {
-        alert('error fetching route');
-    })
+    //     console.log(this.busInfo);
+    //   }).catch(err => {
+    //     alert('error fetching route');
+    // })
   }
-
-  // buildDescription(arr: Stop[]) {
-  //   arr.forEach(stop => {
-  //     if (this.busDictionary[stop.id] !== undefined) {
-  //       stop.stopDescription = stop.name + '  ---' + this.busDictionary[stop.id]['stopDesc'];
-  //     } else {
-  //       stop.stopDescription = stop.name;
-  //     }
-  //   });
-  // } 
-
 
   getBusActivity() {
-    this.http.get(`http://localhost:3000/get_vehicle_info/${this.busId}`).toPromise()
+    this.http.get(`http://localhost:3000/get_vehicle_info/${this.busFullId}`).toPromise()
       .then(res => {
-
-        // this.busActivities = [];
 
         // get stop name, stop information, directions
         for (let element of res['VehicleActivity']) {
-          
+
           let activity = new Activity();
           activity.curStop = element['MonitoredVehicleJourney']['MonitoredCall']['StopPointName'];
           activity.directionName = element['MonitoredVehicleJourney']['DestinationName'];
@@ -114,18 +101,29 @@ export class SearchComponent implements OnInit {
   }
 
   ngOnInit() {
-      // this.getRoute();
-      // this.getStopInfo();
-      // this.getBusActivity();
+    // this.getRoute();
+    // this.getStopInfo();
+    // this.getBusActivity();
   }
 
-  searchRoute() {
-    this.getRoute();
+  async searchRoute() {
+    let result = await this.getRoute().then(res => {
+      const data = res['searchResults']['matches'][0];
+      this.busInfo.directions = data['directions'];
+      this.busInfo.longName = data['longName'];
+      this.busInfo.shortName = data['shortName'];
+      this.busInfo.id = data['id'];
+
+      console.log(this.busInfo)
+    }).catch(err => {
+      alert('error fetching route');;
+    });
+
     this.busFullId = this.busInfo.id;
     console.log(this.busFullId);
 
-    // this.getStopInfo();
-    // this.getBusActivity();
+    this.getStopInfo();
+    this.getBusActivity();
     this.searchFlag = true;
   }
 
