@@ -4,7 +4,6 @@ import { Bus } from '../bus.model';
 import { Stop } from '../stops.model';
 import { Activity } from '../activity.model';
 
-
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
@@ -26,29 +25,23 @@ export class SearchComponent implements OnInit {
   }
 
   refresh() {
+    this.busDictionary = {};
     this.getStopInfo();
   }
 
-  getDetails(index) {
-    console.log(index);
+  getDetails(index): void {
+    // check if the click has happened, expand if has.
     if (index == 0) {
-
       this.expandFrom = this.expandFrom ? false : true;
-      console.log(this.fromStops);
     } else {
       this.expandBack = this.expandBack ? false : true;
-      console.log(this.backStops);
     }
   }
 
-  checkStopInfo(stop: Stop) {
-    console.log(stop);
-    return false;
-  }
-
-  getStopInfo() {
+  getStopInfo(): void {
     this.http.get(`http://localhost:3000/get_stops/${this.busFullId}`).toPromise()
       .then(res => {
+        // get birectional stops
         this.fromStops = res[0]['stops'] as Stop[];
         this.backStops = res[1]['stops'] as Stop[];
         this.getBusActivity();
@@ -60,20 +53,9 @@ export class SearchComponent implements OnInit {
 
   getRoute(): Promise<Object> {
     return this.http.get(`http://localhost:3000/get_route/${this.busId}`).toPromise();
-    //   .then(res => {
-    //     const data = res['searchResults']['matches'][0];
-    //     this.busInfo.directions = data['directions'] ;
-    //     this.busInfo.longName = data['longName'] ;
-    //     this.busInfo.shortName = data['shortName'] ;
-    //     this.busInfo.id = data['id'] ;
-
-    //     console.log(this.busInfo);
-    //   }).catch(err => {
-    //     alert('error fetching route');
-    // })
   }
 
-  getBusActivity() {
+  getBusActivity():void {
     this.http.get(`http://localhost:3000/get_vehicle_info/${this.busFullId}`).toPromise()
       .then(res => {
 
@@ -87,11 +69,8 @@ export class SearchComponent implements OnInit {
           activity.stopDesc = element['MonitoredVehicleJourney']['MonitoredCall']['Extensions']['Distances']['PresentableDistance'];
           activity.stopPointName = element['MonitoredVehicleJourney']['MonitoredCall']['StopPointName'];
           activity.stopPointRef = element['MonitoredVehicleJourney']['MonitoredCall']['StopPointRef'];
-          // this.busActivities.push(activity);
           this.busDictionary[activity.stopPointRef] = activity;
         }
-
-
       })
       .catch(err => {
         console.log(err);
@@ -101,9 +80,7 @@ export class SearchComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.getRoute();
-    // this.getStopInfo();
-    // this.getBusActivity();
+    this.busId = 'Q17';
   }
 
   async searchRoute() {

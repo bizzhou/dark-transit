@@ -2,10 +2,12 @@
 body {
     background-color: #222222;
     color: #CACACA;
+    font-family: 'Roboto Slab', serif;
 }
 
-
 h1 {
+    font-size: 150%;
     text-align: center;
     color: #999999;
+    font-family: 'Monoton', cursive;
 }

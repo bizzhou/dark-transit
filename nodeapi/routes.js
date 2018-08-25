@@ -21,10 +21,10 @@ var appRouter = function (app) {
 
 
         request(from, { json: true }, (err, result, body) => {
-            if (err) res.status(404).send();
+            if (err) res.status(404).send('bad request');
             dirs.push(body);
             request(back, { json: true }, (err, result, body) => {
-                if (err) res.status(404).send();
+                if (err) res.status(404).send('bad request');
                 dirs.push(body);
                 res.status(200).send(dirs);
             });
@@ -37,7 +37,6 @@ var appRouter = function (app) {
 
     app.get("/get_vehicle_info/:route", function (req, res) {
         const url = `http://bustime.mta.info/api/siri/vehicle-monitoring.json?key=OBANYC&LineRef=${req.params.route}`;
-        // const url = `http://bustime.mta.info/api/siri/vehicle-monitoring.json?key=OBANYC&OperatorRef=MTA+NYCT&LineRef=${req.params.route}`;
         request(url, { json: true }, (err, result, body) => {
             if (err) {
                 return res.status(404).send('bad request');
@@ -48,12 +47,5 @@ var appRouter = function (app) {
     })
 
 }
-
-
-
-
-
-
-
 
 module.exports = appRouter;
