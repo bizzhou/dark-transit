@@ -1,0 +1,19 @@
+<main>
+    <div>
+      <h1>Dark Transit</h1>
+      <!-- <img src="../../assets/logo.png" alt="Dark Transit"> -->
+    </div>
+
+    <div *ngIf="getKeys(stopDetails).length === 0">
+      No Data Available
+    </div>
+    
+     <div *ngFor="let key of getKeys(stopDetails)">
+       <p class="full-name">{{key}}</p>
+       <div *ngFor="let detail of stopDetails.get(key)">
+        <p>{{detail.timeDiff}} -- {{detail.distance}}</p>
+       </div>
+     </div>
+
+
+</main>

@@ -2,9 +2,7 @@ const request = require('request');
 const accountSid = 'AC436f0f54a0da9fae78f50b31a168ae98';
 const authToken = '';
 
-
-const client = require('twilio')(accountSid, authToken);
-
+// const client = require('twilio')(accountSid, authToken);
 
 var appRouter = function (app) {
     /**
@@ -55,54 +53,61 @@ var appRouter = function (app) {
 
     });
 
-    app.get("/get_notification/:stopId/:busId/:phone_number/:mins_before", function (req, res) {
-        const url = `http://bustime.mta.info/api/siri/stop-monitoring.json?key=OBANYC&OperatorRef=MTA&MonitoringRef=${req.params.stopId}&LineRef=MTA%20NYCT_Q17`
+    /**
+     * get stop monitoring information
+     */
+    app.get("/get_stop_monitoring/:stopId/", function (req, res) {
+        const url = `http://bustime.mta.info/api/siri/stop-monitoring.json?key=OBANYC&OperatorRef=MTA&MonitoringRef=${req.params.stopId}`
 
         request(url, { json: true }, (err, result, body) => {
             if (err) {
                 return res.status(404).send('bad request');
             }
 
-            let minDeduct = 10;
-            let newTime = undefined;
+            res.status(200).send(body['Siri']['ServiceDelivery']['StopMonitoringDelivery']);
 
-            for (let item of body['Siri']['ServiceDelivery']['StopMonitoringDelivery'][0]['MonitoredStopVisit']) {
-                // console.log(item['MonitoredVehicleJourney']['MonitoredCall']['ExpectedArrivalTime']);
-                let timeStr = item['MonitoredVehicleJourney']['MonitoredCall']['ExpectedArrivalTime'];
-                let busTime = new Date(timeStr);
-                busTime.setMinutes(busTime.getMinutes() - 10);
 
-                if (busTime > Date.now()) {
-                    newTime = busTime;
-                    break;
-                } 
-            }
 
-            if (newTime === undefined) {
-                res.status(200).send('No bus within given time range');
-            } else {
+            // let minDeduct = 10;
+            // let newTime = undefined;
+
+            // for (let item of body['Siri']['ServiceDelivery']['StopMonitoringDelivery'][0]['MonitoredStopVisit']) {
+            //     // console.log(item['MonitoredVehicleJourney']['MonitoredCall']['ExpectedArrivalTime']);
+            //     let timeStr = item['MonitoredVehicleJourney']['MonitoredCall']['ExpectedArrivalTime'];
+            //     let busTime = new Date(timeStr);
+            //     busTime.setMinutes(busTime.getMinutes() - 10);
+
+            //     if (busTime > Date.now()) {
+            //         newTime = busTime;
+            //         break;
+            //     } 
+            // }
+
+            // if (newTime === undefined) {
+            //     res.status(200).send('No bus within given time range');
+            // } else {
                 
-                console.log(`receiveing the message in ${newTime}`);
+            //     console.log(`receiveing the message in ${newTime}`);
 
-                setTimeout(() => {
+            //     setTimeout(() => {
 
-                    console.log('123');
+            //         console.log('123');
         
-                    client.messages
-                        .create({
-                            to: '+16465206821',
-                            from: '+12015286431',
-                            body: `${req.params.busId} Bus will arrive in ${minDeduct} mins, get ready!!!`,
-                        })
-                        .then((message) => console.log(message.sid));
+            //         client.messages
+            //             .create({
+            //                 to: '+16465206821',
+            //                 from: '+12015286431',
+            //                 body: `${req.params.busId} Bus will arrive in ${minDeduct} mins, get ready!!!`,
+            //             })
+            //             .then((message) => console.log(message.sid));
         
-                    console.log('done');
+            //         console.log('done');
             
-                }, newTime - Date.now());
+            //     }, newTime - Date.now());
 
 
-                res.status(200).send('Done, you will receive a SMS in ' + minDeduct + ' minutes before the bus arrive');
-            }
+            //     res.status(200).send('Done, you will receive a SMS in ' + minDeduct + ' minutes before the bus arrive');
+            // }
 
         });
 

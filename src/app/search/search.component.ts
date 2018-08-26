@@ -102,6 +102,7 @@ export class SearchComponent implements OnInit {
     this.getStopInfo();
     this.getBusActivity();
     this.searchFlag = true;
+    this.expandFrom = true;
   }
 
   sendNotify(stop: Stop) {
