@@ -1,10 +1,10 @@
 const request = require('request');
 
 // twillo constants
-const accountSid = 'AC436f0f54a0da9fae78f50b31a168ae98';
-const authToken = '';
+// const accountSid = 'AC436f0f54a0da9fae78f50b31a168ae98';
+// const authToken = '';
 
-const client = require('twilio')(accountSid, authToken);
+// const client = require('twilio')(accountSid, authToken);
 
 var appRouter = function (app) {
     /**

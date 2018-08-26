@@ -2,11 +2,16 @@
 
 This is a Angular App for MTA bus time. I use a proxy server to provide the access the MTA BusTime API. 
 
+![alt text](./record.gif "demo")
+![alt text](./twillo.jpeg "Logo Title Text 1")
+
 ## Functionalities
 
 - Look up all bus stops and how long it takes for bus to get to that stop
 - Look up detailed bus stop information.
 - Favorite list for most frequently visited stops.
+
+
 
 ## Todo:
 - Integrate Twillo to send SMS to user.
