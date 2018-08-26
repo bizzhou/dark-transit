@@ -21,8 +21,28 @@ export class StopComponent implements OnInit {
   }
 
   timeDifference(start: Date, end: Date) {
-    let time =  (start.getTime() - end.getTime()) / 60000;
+    let time = (start.getTime() - end.getTime()) / 60000;
     return Math.round(time);
+  }
+
+  notifyMe(key: string) {
+    let minutes = prompt('How advanced do you want to be notified?');
+
+    if (minutes !== null) {
+      console.log(parseInt(minutes));
+      if (isNaN(parseInt(minutes))) {
+        alert('please enter an numeric value');
+      } else {
+        this.http.get(`http://localhost:3000/get_notify/${this.stopId}/${key}/${minutes}`).toPromise()
+          .then(res => {
+            alert('Done, please wait for the notification');
+          }).catch(err => {
+            console.log(err);
+            alert('No bus find in given time');
+          });;
+      }
+    }
+
   }
 
   ngOnInit() {
@@ -36,7 +56,7 @@ export class StopComponent implements OnInit {
           let detail = new Details();
           detail.publishName = element['MonitoredVehicleJourney']['PublishedLineName'];
           detail.destinationName = element['MonitoredVehicleJourney']['DestinationName'];
-          let difference = this.timeDifference(new Date(element['MonitoredVehicleJourney']['MonitoredCall']['ExpectedArrivalTime']), new Date()); 
+          let difference = this.timeDifference(new Date(element['MonitoredVehicleJourney']['MonitoredCall']['ExpectedArrivalTime']), new Date());
           // check if the time is unknown or x minutes;
           detail.timeDiff = isNaN(difference) ? 'Unknown time' : difference.toLocaleString() + ' minutes';
           detail.distance = element['MonitoredVehicleJourney']['MonitoredCall']['Extensions']['Distances']['PresentableDistance'];

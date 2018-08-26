@@ -31,7 +31,7 @@
 
         <div *ngIf="expandBack && i == 1">
           <div *ngFor="let stop of backStops">
-            <p><i class="fa fa-arrow-right" aria-hidden="true"></i> &nbsp; {{stop.name}} &nbsp;
+            <p routerLink='stop/{{stop.id}}'><i class="fa fa-arrow-right" aria-hidden="true"></i> &nbsp; {{stop.name}} &nbsp;
               <span [ngStyle]="{'color':'white', 'font-weight':'bold'}" *ngIf="busDictionary[stop.id] !== undefined">
                 <i class="fa fa-bus" aria-hidden="true"></i>
                 {{busDictionary[stop.id]['stopDesc']}}

@@ -9,7 +9,7 @@
     </div>
     
      <div *ngFor="let key of getKeys(stopDetails)">
-       <p class="full-name">{{key}}</p>
+       <span class="full-name">{{key}}</span> <button (click)="notifyMe(key)">Notify</button>
        <div *ngFor="let detail of stopDetails.get(key)">
         <p>{{detail.timeDiff}} -- {{detail.distance}}</p>
        </div>

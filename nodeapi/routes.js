@@ -66,48 +66,63 @@ var appRouter = function (app) {
 
             res.status(200).send(body['Siri']['ServiceDelivery']['StopMonitoringDelivery']);
 
+        });
+
+    });
 
 
-            // let minDeduct = 10;
-            // let newTime = undefined;
 
-            // for (let item of body['Siri']['ServiceDelivery']['StopMonitoringDelivery'][0]['MonitoredStopVisit']) {
-            //     // console.log(item['MonitoredVehicleJourney']['MonitoredCall']['ExpectedArrivalTime']);
-            //     let timeStr = item['MonitoredVehicleJourney']['MonitoredCall']['ExpectedArrivalTime'];
-            //     let busTime = new Date(timeStr);
-            //     busTime.setMinutes(busTime.getMinutes() - 10);
+    app.get("/get_notify/:stopId/:busId/:time", function (req, res) {
+        const url = `http://bustime.mta.info/api/siri/stop-monitoring.json?key=OBANYC&OperatorRef=MTA&MonitoringRef=${req.params.stopId}`
 
-            //     if (busTime > Date.now()) {
-            //         newTime = busTime;
-            //         break;
-            //     } 
-            // }
+        request(url, { json: true }, (err, result, body) => {
+            if (err) {
+                return res.status(404).send('bad request');
+            }
 
-            // if (newTime === undefined) {
-            //     res.status(200).send('No bus within given time range');
-            // } else {
-                
-            //     console.log(`receiveing the message in ${newTime}`);
+            // res.status(200).send(body['Siri']['ServiceDelivery']['StopMonitoringDelivery']);
 
-            //     setTimeout(() => {
+            console.log(req.params.busId);
 
-            //         console.log('123');
+            let minDeduct = parseInt(req.params.time);
+            let newTime = undefined;
+
+            for (let item of body['Siri']['ServiceDelivery']['StopMonitoringDelivery'][0]['MonitoredStopVisit']) {
+                console.log(item['MonitoredVehicleJourney']['PublishedLineName']);
+                if (item['MonitoredVehicleJourney']['PublishedLineName'] === req.params.busId) {
+                    console.log('here');
+                    let timeStr = item['MonitoredVehicleJourney']['MonitoredCall']['ExpectedArrivalTime'];
+                    let busTime = new Date(timeStr);
+                    busTime.setMinutes(busTime.getMinutes() - minDeduct);
+
+                    if (busTime > Date.now()) {
+                        newTime = busTime;
+                        break;
+                    } 
+                }   
+            }
+
+            if (newTime === undefined) {
+                res.status(500).send({'error':'No bus within given time range'});
+            } else {
+                console.log(`receiveing the message in ${newTime}`);
+
+                setTimeout(() => {
+
+                    client.messages
+                        .create({
+                            to: '+1',
+                            from: '+12015286431',
+                            body: `${req.params.busId} Bus will arrive in ${minDeduct} mins, get ready!!!`,
+                        })
+                        .then((message) => console.log(message.sid));
         
-            //         client.messages
-            //             .create({
-            //                 to: '+16465206821',
-            //                 from: '+12015286431',
-            //                 body: `${req.params.busId} Bus will arrive in ${minDeduct} mins, get ready!!!`,
-            //             })
-            //             .then((message) => console.log(message.sid));
-        
-            //         console.log('done');
+                    console.log('done');
             
-            //     }, newTime - Date.now());
+                }, newTime - Date.now());
 
-
-            //     res.status(200).send('Done, you will receive a SMS in ' + minDeduct + ' minutes before the bus arrive');
-            // }
+                res.status(200).send({'success': 'Done, you will receive a SMS in ' + minDeduct + ' minutes before the bus arrive'});
+            }
 
         });
 
