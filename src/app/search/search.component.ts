@@ -1,9 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Bus } from '../bus.model';
 import { Stop } from '../stops.model';
 import { Activity } from '../activity.model';
 
+@Pipe({name: 'mapToArray'})
+export class MapToArray implements PipeTransform {
+  transform(value, args:string[]) : any {
+    let arr = [];
+    for (let key in value) {
+      arr.push({key: key, value: value[key]});
+    }
+    return arr;
+  }
+}
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
@@ -14,6 +24,7 @@ export class SearchComponent implements OnInit {
   busInfo = new Bus();
   fromStops: Stop[];
   backStops: Stop[];
+  favoriteStops = {};
   busDictionary = {};
   expandFrom: boolean;
   expandBack: boolean;
@@ -81,6 +92,7 @@ export class SearchComponent implements OnInit {
 
   ngOnInit() {
     this.busId = 'Q17';
+    this.getFavorites();
   }
 
   async searchRoute() {
@@ -105,8 +117,11 @@ export class SearchComponent implements OnInit {
     this.expandFrom = true;
   }
 
-  sendNotify(stop: Stop) {
-    console.log(stop);
+
+  getFavorites() {
+    this.favoriteStops = JSON.parse(localStorage.getItem('favorites'));
+    console.log(this.favoriteStops);
   }
+  
 
 }

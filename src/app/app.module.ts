@@ -7,14 +7,15 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './router.module';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { SearchComponent } from './search/search.component';
+import { SearchComponent, MapToArray } from './search/search.component';
 import { StopComponent } from './stop/stop.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SearchComponent,
-    StopComponent
+    StopComponent,
+    MapToArray,
   ],
   imports: [
     BrowserModule,

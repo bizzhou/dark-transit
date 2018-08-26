@@ -5,7 +5,6 @@ import { SearchComponent } from './search/search.component';
 import { StopComponent } from './stop/stop.component';
 
 const router: Routes = [
-    // { path: '', component: HomeComponent},
     { path: '', component: SearchComponent },
     { path: 'stop/:stopId', component: StopComponent}
 ];

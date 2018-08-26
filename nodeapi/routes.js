@@ -1,8 +1,10 @@
 const request = require('request');
+
+// twillo constants
 const accountSid = 'AC436f0f54a0da9fae78f50b31a168ae98';
 const authToken = '';
 
-// const client = require('twilio')(accountSid, authToken);
+const client = require('twilio')(accountSid, authToken);
 
 var appRouter = function (app) {
     /**
@@ -111,13 +113,17 @@ var appRouter = function (app) {
 
                     client.messages
                         .create({
+                            // put your phone number here
                             to: '+1',
+
+                            // put the twillo phone number here
                             from: '+12015286431',
                             body: `${req.params.busId} Bus will arrive in ${minDeduct} mins, get ready!!!`,
                         })
-                        .then((message) => console.log(message.sid));
+                        .then((message) => console.log(message.sid))
+                        .catch((err) => console.log(err));
         
-                    console.log('done');
+                    console.log('twillo message send');
             
                 }, newTime - Date.now());
 

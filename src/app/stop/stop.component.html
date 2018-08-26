@@ -7,6 +7,12 @@
     <div *ngIf="getKeys(stopDetails).length === 0">
       No Data Available
     </div>
+
+      <h1>{{stopName}}</h1>
+
+
+      <button *ngIf="checkFavorite() === true" (click)="addToFavorite()"><i class="fas fa-bookmark"></i>    &nbsp;    Favorite</button>
+      <button *ngIf="checkFavorite() === false" (click)="addToFavorite()"><i class="fas fa-bookmark"></i>    &nbsp;    Unfavorite</button>
     
      <div *ngFor="let key of getKeys(stopDetails)">
        <span class="full-name">{{key}}</span> <button (click)="notifyMe(key)">Notify</button>

@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Details } from '../stopdetail.model';
 
-
 @Component({
   selector: 'app-stop',
   templateUrl: './stop.component.html',
@@ -11,6 +10,7 @@ import { Details } from '../stopdetail.model';
 })
 export class StopComponent implements OnInit {
   stopId: string;
+  stopName: string;
   stopDetails = new Map<string, Details[]>();
 
   constructor(private activatedRoute: ActivatedRoute, private http: HttpClient) {
@@ -47,9 +47,12 @@ export class StopComponent implements OnInit {
 
   ngOnInit() {
     this.stopId = this.activatedRoute.snapshot.paramMap.get('stopId');
+
     this.http.get(`http://localhost:3000/get_stop_monitoring/${this.stopId}`).toPromise()
       .then(res => {
         let MonitoredStops = res[0]['MonitoredStopVisit'];
+
+        this.stopName = MonitoredStops[0]['MonitoredVehicleJourney']['MonitoredCall']['StopPointName'];
 
         MonitoredStops.forEach(element => {
 
@@ -76,6 +79,34 @@ export class StopComponent implements OnInit {
         console.log(err);
         alert('failed to fetch stop information');
       })
+  }
+
+
+  addToFavorite(): void {
+    console.log('adding to favorite');
+    if (localStorage.getItem('favorites') === null) {
+      let favStops = {};
+      favStops[this.stopId] =  this.stopName;
+      console.log(favStops);
+      console.log(JSON.stringify(favStops.toString()));
+
+      localStorage.setItem('favorites', JSON.stringify(favStops));
+    } else {
+      let data = JSON.parse(localStorage.getItem('favorites'));
+      if (data[this.stopId] !== undefined) {
+        console.log('here');
+        delete data[this.stopId];
+      } else {
+        data[this.stopId] =  this.stopName;
+      }
+
+      localStorage.setItem('favorites', JSON.stringify(data));
+    }
+  }
+
+  checkFavorite(): boolean {
+    let data = JSON.parse(localStorage.getItem('favorites'));
+    return data[this.stopId] === undefined;
   }
 
 }
