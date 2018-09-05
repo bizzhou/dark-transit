@@ -44,3 +44,5 @@ testem.log
 Thumbs.db
 
 nodeapi/package-lock\.json
+
+package-lock\.json

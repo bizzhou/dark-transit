@@ -72,7 +72,7 @@ export class StopComponent implements OnInit {
           }
         });
 
-        console.log(this.stopDetails);
+        console.log('stop detail ', this.stopDetails);
 
       })
       .catch(err => {
@@ -86,7 +86,7 @@ export class StopComponent implements OnInit {
     console.log('adding to favorite');
     if (localStorage.getItem('favorites') === null) {
       let favStops = {};
-      favStops[this.stopId] =  this.stopName;
+      favStops[this.stopId] = this.stopName;
       console.log(favStops);
       console.log(JSON.stringify(favStops.toString()));
 
@@ -97,7 +97,7 @@ export class StopComponent implements OnInit {
         console.log('here');
         delete data[this.stopId];
       } else {
-        data[this.stopId] =  this.stopName;
+        data[this.stopId] = this.stopName;
       }
 
       localStorage.setItem('favorites', JSON.stringify(data));
@@ -105,8 +105,12 @@ export class StopComponent implements OnInit {
   }
 
   checkFavorite(): boolean {
-    let data = JSON.parse(localStorage.getItem('favorites'));
-    return data[this.stopId] === undefined;
+    if (localStorage.getItem('favorites') !== null) {
+      let data = JSON.parse(localStorage.getItem('favorites'));
+      return data[this.stopId] === undefined;
+    } else {
+      return true;
+    }
   }
 
 }
